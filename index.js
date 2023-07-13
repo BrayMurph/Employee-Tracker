@@ -1,5 +1,6 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
+const table = require("console.table");
 
 const connection = mysql.createConnection({
     host: "localhost",
@@ -10,11 +11,13 @@ const connection = mysql.createConnection({
     
 });
 
+
+
 connection.connect(function (err) {
     if (err) {
      throw err;
     } 
-    console.log(`------------ Employee Manager ------------`);
+    console.table("------------ Employee Manager ------------")
     startApp();
 });
 
@@ -64,8 +67,19 @@ function viewallRoles() {
 
 }
 
-function viewEmployee() {
-
+const viewEmployee = async () => {
+    console.log("   --------- Now Viewing Employees ---------");
+    let query = "SELECT * FROM employee";
+    connection.query(query, function (err, res) {
+        if (err) {
+            throw err;
+        }
+        let employeeArr = [];
+        res.forEach(employee => employeeArr.push(employee));
+        console.table(employeeArr);
+        console.log("Viewed Employees");
+        startApp();
+    });
 }
 
 function addDepartment() {
