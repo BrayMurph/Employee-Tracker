@@ -1,6 +1,7 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const table = require("console.table");
+const { start } = require("repl");
 
 const connection = mysql.createConnection({
     host: "localhost",
@@ -60,11 +61,33 @@ function startApp() {
 }
 
 function viewallDepartments() {
-
+    console.log("   -------- Now Viewing Departments --------");
+    let query = "SELECT * FROM department";
+    connection.query(query, function (err, res) {
+        if (err) {
+            throw err;
+        }
+        let departmentArr = [];
+        res.forEach(department => departmentArr.push(department));
+        console.table(departmentArr);
+        console.log("Viewed Employees");
+        startApp();
+    });
 }
 
 function viewallRoles() {
-
+    console.log("   ---------- Now Viewing Roles ----------");
+    let query = "SELECT * FROM role";
+    connection.query(query, function (err, res) {
+        if (err) {
+            throw err;
+        }
+        let roleArr = [];
+        res.forEach(role => roleArr.push(role));
+        console.table(roleArr);
+        console.log("Viewed Employees");
+        startApp();
+    });
 }
 
 const viewEmployee = async () => {
@@ -91,7 +114,37 @@ function addRole() {
 }
 
 function addEmployee() {
+    console.log("----- Now Adding Employee -----");
+    let roles = connection.query("SELECT * FROM role");
+    let managers = connection.query("SELECT * FROM employee");
+    let answer = inquirer.prompt([
+        {
+            name: "firstName",
+            type: "input",
+            message: "Give First Name of Employee"
+        },
+        {
+            name: "lastName",
+            type: "input",
+            message: "Give Last Name of Employee"
+        },
+        {
+        
+        },
+        {
+           
+        }
+    ])
 
+    let result = connection.query("INSERT INTO employee SET ?", {
+        first_name: answer.firstName,
+        last_name: answer.lastName,
+        role_id: (answer.employeeRole),
+        manager_id: (answer.employeeManager)
+    });
+
+    console.log(`${answer.firstName} ${answer.lastName} added successfully.`)
+    startApp();
 }
 
 function updateRole() {
